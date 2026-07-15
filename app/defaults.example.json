@@ -1,0 +1,5 @@
+{
+  "//": "Optional. Copy to defaults.json (gitignored) to pre-fill the setup wizard.",
+  "//site": "Your Atlassian site — colleagues then just press Enter at the site prompt.",
+  "site": "yourcompany.atlassian.net"
+}

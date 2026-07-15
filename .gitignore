@@ -1,0 +1,7 @@
+node_modules/
+build/
+dist/
+.env
+# Per-distribution defaults (e.g. company Atlassian site) — kept out of the
+# public repo; bundled into the built zip from a maintainer's local copy.
+app/defaults.json

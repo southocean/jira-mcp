@@ -1,0 +1,21 @@
+{
+  "name": "@mahjonglogic/jira-mcp",
+  "version": "1.0.0",
+  "description": "Standalone Jira MCP server — installs into all your MCP clients",
+  "type": "module",
+  "bin": {
+    "jira-mcp": "cli.js"
+  },
+  "main": "server.js",
+  "scripts": {
+    "setup": "node cli.js setup",
+    "start": "node server.js"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "dotenv": "^17.4.2",
+    "zod": "^3.23.8"
+  }
+}

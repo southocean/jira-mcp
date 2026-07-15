@@ -1,0 +1,5 @@
+# Keep shell launchers LF so bash on macOS/Linux doesn't choke on CR.
+*.command text eol=lf
+*.sh      text eol=lf
+# Windows batch files want CRLF.
+*.cmd     text eol=crlf
