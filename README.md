@@ -27,8 +27,10 @@ your assistant. No repo to clone, no config files to edit.
 That's it. **Restart** any open Claude / VS Code / Cursor windows and the `jira`
 tools are there.
 
-> **Requirement:** [Node.js](https://nodejs.org/) must be installed. If you write
-> code on this machine, you almost certainly already have it.
+> **Node.js** is required, but you probably don't need to think about it: if it's
+> missing, the **Windows** installer sets up a local copy automatically (no admin);
+> on **macOS** it installs via Homebrew if available, otherwise points you to the
+> one-click download.
 
 ### Update
 
