@@ -96,10 +96,20 @@ node build.mjs
 
 ### Cut a release (so users can download the zip)
 
-The repo tracks **source only** (the zip is a build artifact). To publish a
-downloadable zip: GitHub → **Releases** → **Draft a new release** → tag e.g.
-`v1.0.0` → drag `dist/jira-mcp.zip` into the assets → publish. The
-[Install](#install-users) link above points at the latest release.
+The repo tracks **source only** (the zip is a build artifact). One-time setup:
+install the [`gh` CLI](https://cli.github.com/) and run `gh auth login`. Then a
+release is a single command:
+
+```bash
+node release.mjs v1.1.0            # or:  npm run release -- v1.1.0
+```
+
+It builds `dist/jira-mcp.zip`, creates the tagged GitHub release, and uploads the
+zip. The [Install](#install-users) link always serves the newest one:
+`https://github.com/southocean/jira-mcp/releases/latest/download/jira-mcp.zip`.
+
+Prefer the browser? Releases → *Draft a new release* → tag → drag in
+`dist/jira-mcp.zip` → publish.
 
 ### How it works
 

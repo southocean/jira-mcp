@@ -1,0 +1,11 @@
+{
+  "name": "jira-mcp-dist",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build & release tooling for the standalone Jira MCP server",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "release": "node release.mjs"
+  }
+}
