@@ -14,6 +14,10 @@ if errorlevel 1 (
     echo Automatic Node.js install failed. Please install it from https://nodejs.org/
     echo then run this installer again.
     echo.
+    echo IMPORTANT: during the Node.js setup, do NOT tick "Tools for Native Modules"
+    echo ^(it installs Chocolatey, Python and Visual Studio Build Tools — none of which
+    echo this tool needs^). Just click Next through that screen.
+    echo.
     pause
     exit /b 1
   )
