@@ -2,10 +2,20 @@
 
 You are helping the user install the **Jira MCP server** on their machine so the
 `jira` tools appear in their AI clients (Claude Desktop, Claude Code, Cursor,
-VS Code). Act as a friendly, adaptive installer: explain what you're doing, ask
-for what you need, and solve problems as they come up (missing Node, blocked
-downloads, etc.) instead of giving up. Do everything for them — don't just print
-steps for them to run, actually run them with your tools.
+VS Code). Your job is three things: **(1) install and connect it, (2) verify Jira
+actually responds end-to-end, and (3) show the user how to use it.** Act as a
+friendly, adaptive installer: explain what you're doing, ask for what you need, and
+solve problems as they come up (missing Node, blocked downloads, etc.) instead of
+giving up. Do everything for them — don't just print steps for them to run, actually
+run them with your tools.
+
+### What this server is (so you can explain it)
+A small local [MCP](https://modelcontextprotocol.io) server that bridges the user's
+AI assistant to their company Jira over the Jira REST API, using the user's own
+API token. Once installed it exposes 13 `jira` tools (create/read/update/move
+tickets, comments, labels, attachments, search) to every MCP client on the
+machine. It runs locally on demand — the client launches it over stdio; there's no
+always-on service and no data leaves the machine except calls to Jira itself.
 
 **If you don't have terminal/file tools** (e.g. you're the Claude desktop chat app
 with no tools configured), say so honestly and instead guide the user through the
@@ -125,11 +135,86 @@ the user which clients it wired up.
 If a client you know they use shows "not installed — skipped" unexpectedly, mention
 it and offer to register it manually.
 
-### 8. Verify and finish
-Optionally boot the server to confirm it works: run
-`node <installed>/server.js`, send an MCP `initialize` + `tools/list`, and check it
-returns the 13 tools. Then tell the user:
-- ✅ Done — restart any open Claude / VS Code / Cursor windows.
-- The `jira` tools are now available in all of them, no project needed.
-- To change their token later, re-run this, or run `jira-mcp setup`.
-- To remove everything, run the `Uninstall` script from the zip.
+### 8. Verify Jira access end-to-end (don't skip this)
+Prove it works before declaring success. The just-registered server won't be live
+in *this* session (clients load MCP servers on startup), so exercise the installed
+server directly.
+
+The installed `server.js` is at:
+- Windows: `%LOCALAPPDATA%\Programs\jira-mcp\server.js`
+- macOS: `~/Library/Application Support/jira-mcp-app/server.js`
+- Linux: `~/.local/share/jira-mcp/server.js`
+
+Write a small temporary Node script that spawns `node <installed>/server.js` with
+piped stdio and sends these newline-delimited JSON-RPC messages, then reads the
+replies (give it a few seconds), then delete the script:
+
+1. `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"verify","version":"0"}}}`
+2. `{"jsonrpc":"2.0","method":"notifications/initialized"}`
+3. `{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}`
+4. `{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"search_tickets","arguments":{"query":"assignee = currentUser() AND updated >= -30d ORDER BY updated DESC","max":3}}}`
+
+(The ` AND ` in the query makes the server treat it as raw JQL, so no default
+project is needed.)
+
+Pass criteria:
+- `tools/list` returns **13 tools**.
+- `search_tickets` returns a JSON list of tickets — **or an empty list** if the
+  user has none recently (still a pass; it means auth + the round-trip worked).
+- A `401/403` in the response means the token didn't reach Jira — recheck the
+  `.env` path/values and try again.
+
+Report the result to the user in plain language, e.g. "✓ Verified — the server
+reached Jira and pulled up N of your recent tickets."
+
+### 9. Finish: tell them it's done and how to confirm in their app
+- ✅ Connected as **<displayName>**. Restart any open Claude Desktop / Claude Code /
+  Cursor / VS Code windows so they load the `jira` tools.
+- To confirm inside their own client afterward, they can just ask the assistant
+  something like *"search my Jira for my open issues"* — if it lists tickets, it's
+  live there too.
+
+### 10. Show them how to use it
+Paste this usage guide to the user (adjust the project example to their default if
+they set one). They talk to their assistant in plain language — it picks the tool.
+
+> **Your Jira tools are ready.** Just ask your assistant naturally, e.g.:
+> - *"Show me ABC-142"* — read a ticket (summary, status, assignee, description)
+> - *"Create a bug in ABC: login button does nothing on mobile"* — new ticket
+> - *"Search my open bugs"* / *"Find tickets about the payment timeout"* — search
+> - *"Move ABC-142 to in progress"* (or to qa / done) — change status
+> - *"Assign ABC-142 to me"* / *"set the estimate to 3h"* — update fields
+> - *"Comment on ABC-142: fixed in the latest build"* — add a comment
+> - *"What are the comments on ABC-142?"* — read the discussion
+> - *"Add the label needs-qa to ABC-142"* / *"remove label X"* — labels
+> - *"List attachments on ABC-142"* / *"download attachment 19014 to my Desktop"*
+> - *"Turn ABC-20 and ABC-21 into subtasks of ABC-10"* — nest existing tickets
+> - *"Move BUG-9 into the ABC project"* — cross-project move (re-keys the ticket)
+>
+> Tips: you can use just the number ("show me 142") if you set a default project;
+> otherwise include the project key. New tickets land in the project's active
+> sprint automatically. Use **"me"** as an assignee shortcut.
+
+Full tool list (13): `create_ticket`, `get_ticket`, `update_ticket`, `move_ticket`,
+`move_ticket_to_project`, `convert_to_subtask`, `add_comment`, `get_comments`,
+`add_label`, `remove_label`, `list_attachments`, `download_attachment`,
+`search_tickets`.
+
+### Managing it later
+- Change token or default project: run `jira-mcp setup` (or re-run this installer).
+- Update to a newer version: re-run the installer/zip — it keeps the saved token.
+- Remove everything: run the `Uninstall` script from the zip (removes the program,
+  the saved token, and the `jira` entry from every client).
+
+## Troubleshooting
+- **Tools don't show up in the client** → the client must be fully restarted (quit,
+  not just close the window). Confirm the server was registered: the installer
+  prints which clients it wired. For Claude Code, `claude mcp list` should show `jira`.
+- **"No project specified" errors** → they have no default project; either set one
+  via `jira-mcp setup` or include the project key in requests.
+- **401 / "could not authenticate"** → the API token is wrong, revoked, or expired.
+  Re-run `jira-mcp setup` and paste a fresh token.
+- **A client shows "not installed — skipped"** → that app wasn't detected; it's fine
+  if they don't use it. If they do, make sure it's installed and re-run.
+- **Behind a proxy / download blocked** → use the `git clone` fallback in Step 3.
+  Never work around problems by installing build tools (see HARD CONSTRAINTS).
