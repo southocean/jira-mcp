@@ -32,6 +32,18 @@ tools are there.
 > on **macOS** it installs via Homebrew if available, otherwise points you to the
 > one-click download.
 
+### Or: let Claude install it for you
+
+If you use **Claude Code**, you can skip the zip entirely: grab
+[`Setup with Claude.cmd`](Setup%20with%20Claude.cmd) (macOS:
+`Setup with Claude.command`) and [`SETUP-WITH-CLAUDE.md`](SETUP-WITH-CLAUDE.md),
+keep them together, and double-click the launcher. Claude Code reads the playbook,
+asks you for your email + token, handles anything missing (even Node.js), installs,
+and registers everything — an adaptive installer that troubleshoots as it goes.
+
+Only have the **Claude desktop app**? Drag `SETUP-WITH-CLAUDE.md` into a chat and
+Claude will walk you through the steps (it can't run commands itself there).
+
 ### Update
 
 Got a newer zip? **Just run the installer again.** It replaces the old version,
