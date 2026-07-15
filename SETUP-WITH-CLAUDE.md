@@ -15,8 +15,30 @@ steps below one at a time.
 - The API token is sensitive. Never print it back, never write it anywhere except
   the credentials file below, never put it in a URL. Tell the user it stays only
   on their machine.
-- Prefer no-admin steps. Don't require elevation unless there's truly no alternative.
 - Confirm success at the end and tell them to restart their clients.
+
+## HARD CONSTRAINTS — what you may install (read this first)
+This tool needs **only Node.js** plus three pure-JavaScript npm packages that are
+**already bundled** in the release zip. There is **no native code to compile**.
+
+- **NEVER install any of these:** Chocolatey, Scoop, winget packages, Visual
+  Studio, Visual Studio Build Tools, the C++ toolchain, Python, node-gyp,
+  windows-build-tools, or any other global SDK/compiler/package manager. None of
+  them are required. If you think you need a build toolchain, you are mistaken —
+  stop and re-read this.
+- **The ONLY software you may install is Node.js**, and ONLY if `node --version`
+  fails, and ONLY via the portable-zip method in Step 2 (a plain download +
+  extract to a user folder, no admin, no package manager).
+- **Do not run `npm install`** for the app — dependencies are bundled in the zip.
+  (Only the `git clone` fallback in Step 3 runs `npm install --omit=dev`, and even
+  that must never trigger native builds; if it seems to want a compiler, something
+  is wrong — stop and tell the user instead of installing build tools.)
+- **Prefer installing nothing.** If you are Claude Code, Node already exists, so
+  Step 2 should do nothing. Keep the footprint to: a downloaded zip, a `.env`
+  file, and the client config entries. Nothing else.
+- Never require admin/elevation. If a step seems to need it, stop and ask the user.
+- If anything unexpected happens, **ask the user rather than installing tooling to
+  work around it.**
 
 ## Steps
 
@@ -25,13 +47,18 @@ Tell the user you'll connect their Jira to their AI tools; it takes ~2 minutes a
 you'll need their Atlassian email and an API token in a moment.
 
 ### 2. Preflight: Node.js
-Run `node --version`. If Node is missing (unlikely if you're Claude Code, which
-needs Node itself):
-- **Windows:** download the latest LTS from `https://nodejs.org/dist/index.json`
-  (pick the newest entry with `lts` set), grab `node-<ver>-win-x64.zip`, extract to
-  `%LOCALAPPDATA%\Programs\nodejs`, and add that folder to the user PATH. No admin.
-- **macOS:** `brew install node` if Homebrew exists, else point them to the
-  nodejs.org `.pkg` and wait for them to install it.
+Run `node --version`. **If it succeeds, do nothing here — skip to Step 3.** (If
+you are Claude Code, Node is already present, so this is the normal case.)
+
+Only if `node --version` fails, install Node via a plain portable download — no
+package manager, no admin:
+- **Windows:** fetch `https://nodejs.org/dist/index.json`, pick the newest entry
+  with `lts` set, download `node-<ver>-win-x64.zip`, extract to
+  `%LOCALAPPDATA%\Programs\nodejs`, and add that folder to the user PATH. That's
+  it — do not use Chocolatey/winget, and do not install any build tools.
+- **macOS:** if Homebrew is already installed, `brew install node`; otherwise point
+  the user to the nodejs.org `.pkg` and wait for them to install it. Do not install
+  Homebrew yourself.
 
 ### 3. Get the program
 Download the latest release zip and extract it to a working folder:
