@@ -11,9 +11,9 @@ code here you almost certainly already have it.
 TO INSTALL
 ----------
   Windows : double-click  "Install Jira MCP.cmd"
-  macOS   : double-click  "Install Jira MCP.command"
+  macOS   : open the "macOS" folder, then double-click "Install Jira MCP.command"
             (first time you may need, in Terminal:
-             chmod +x "Install Jira MCP.command")
+             chmod +x "macOS/Install Jira MCP.command")
 
 It will:
   1. Copy the program to your user folder.
@@ -31,7 +31,7 @@ clients. No need to uninstall first.
 TO REMOVE
 ---------
   Windows : double-click  "Uninstall.cmd"
-  macOS   : double-click  "Uninstall.command"
+  macOS   : open the "macOS" folder, then double-click "Uninstall.command"
 Removes the program, your saved token, and the "jira" entry from every client.
 (Keep this folder if you want to uninstall later, or just re-download it.)
 

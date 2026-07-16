@@ -17,7 +17,7 @@ your assistant. No repo to clone, no config files to edit.
 | OS | Double-click |
 |----|--------------|
 | Windows | `Install Jira MCP.cmd` |
-| macOS | `Install Jira MCP.command`  (first time you may need `chmod +x "Install Jira MCP.command"` in Terminal) |
+| macOS | open the `macOS` folder, then `Install Jira MCP.command`  (first time you may need `chmod +x "macOS/Install Jira MCP.command"` in Terminal) |
 
 **3. Follow the prompt.** It asks for two things:
 - your **Atlassian email**
@@ -52,7 +52,7 @@ clients. No need to uninstall first.
 
 ### Uninstall
 
-Double-click **`Uninstall.cmd`** (Windows) or **`Uninstall.command`** (macOS). It
+Double-click **`Uninstall.cmd`** (Windows) or **`macOS/Uninstall.command`** (macOS). It
 removes the program, your saved token, and the `jira` entry from every client.
 
 ### A note on your token

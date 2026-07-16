@@ -1,6 +1,6 @@
 {
   "name": "jira-mcp-dist",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "private": true,
   "description": "Build & release tooling for the standalone Jira MCP server",
   "type": "module",

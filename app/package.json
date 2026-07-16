@@ -1,6 +1,6 @@
 {
   "name": "@mahjonglogic/jira-mcp",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "Standalone Jira MCP server — installs into all your MCP clients",
   "type": "module",
   "bin": {

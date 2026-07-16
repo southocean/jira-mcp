@@ -14,7 +14,10 @@ import { envPath } from "./lib/paths.js";
 dotenv.config({ path: join(dirname(fileURLToPath(import.meta.url)), ".env"), quiet: true });
 dotenv.config({ path: envPath, override: true, quiet: true });
 
-const CLOUD_ID = process.env.JIRA_CLOUD_ID;
+// Basic auth with an API token must go to the site's own domain, not the
+// api.atlassian.com/ex/jira/{cloudId} gateway (that gateway is OAuth-only and
+// rejects Basic auth with 401). JIRA_SITE is written by `jira-mcp setup`.
+const SITE = process.env.JIRA_SITE;
 const TOKEN = process.env.JIRA_API_TOKEN;
 const EMAIL = process.env.JIRA_EMAIL;
 // The default project is per-user and OPTIONAL. When unset, tools that need a
@@ -25,8 +28,8 @@ const PROJECT = (process.env.JIRA_PROJECT || "").trim().toUpperCase() || null;
 // current name; JIRA_ASSIGNEE_ACCOUNT_ID is still read as a back-compat fallback.
 const ME_ACCOUNT_ID = process.env.JIRA_ME_ACCOUNT_ID || process.env.JIRA_ASSIGNEE_ACCOUNT_ID || null;
 
-const BASE = `https://api.atlassian.com/ex/jira/${CLOUD_ID}/rest/api/3`;
-const AGILE = `https://api.atlassian.com/ex/jira/${CLOUD_ID}/rest/agile/1.0`;
+const BASE = `https://${SITE}/rest/api/3`;
+const AGILE = `https://${SITE}/rest/agile/1.0`;
 
 const auth = Buffer.from(`${EMAIL}:${TOKEN}`).toString("base64");
 

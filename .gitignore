@@ -5,3 +5,5 @@ dist/
 # Per-distribution defaults (e.g. company Atlassian site) — kept out of the
 # public repo; bundled into the built zip from a maintainer's local copy.
 app/defaults.json
+# Local auth-diagnostic scratch — may contain a live API token. Never commit.
+token.txt
